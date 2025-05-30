@@ -1,0 +1,25 @@
+- type: entity
+  id: ActionBindWeapon
+  name: Bind Weapon
+  description: Bind this weapon to yourself.
+  components:
+  - type: InstantAction
+    useDelay: 2
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Starlight/Interface/Actions/actions_clockwork.rsi
+      state: exit
+    event: !type:BindWeaponActionEvent {}
+
+- type: entity
+  id: ActionCallWeapon
+  name: Call Weapon
+  description: Call your bound weapon to your hand.
+  components:
+  - type: InstantAction
+    useDelay: 15
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Starlight/Interface/Actions/actions_clockwork.rsi
+      state: gears
+    event: !type:CallWeaponActionEvent {}

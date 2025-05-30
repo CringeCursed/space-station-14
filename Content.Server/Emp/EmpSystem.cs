@@ -6,6 +6,13 @@ using Content.Shared.Emp;
 using Content.Shared.Examine;
 using Robust.Server.GameObjects;
 using Robust.Shared.Map;
+using Robust.Shared.Audio.Systems; // 🌟Starlight🌟 start
+using Robust.Shared.Player; 
+using Robust.Shared.Audio;
+using Robust.Shared.Timing; 
+using Content.Shared.NPC.Systems;
+using Content.Shared.Weapons.Melee.Events; 
+using Content.Shared.Popups; // 🌟Starlight🌟 end
 
 namespace Content.Server.Emp;
 
@@ -13,15 +20,19 @@ public sealed class EmpSystem : SharedEmpSystem
 {
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
     [Dependency] private readonly TransformSystem _transform = default!;
+    [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
+    [Dependency] private readonly SharedPopupSystem _popup = default!; // 🌟Starlight🌟
+    [Dependency] private readonly SharedAudioSystem _audio = default!; // 🌟Starlight🌟
 
     public const string EmpPulseEffectPrototype = "EffectEmpPulse";
-
+    
     public override void Initialize()
     {
         base.Initialize();
         SubscribeLocalEvent<EmpDisabledComponent, ExaminedEvent>(OnExamine);
         SubscribeLocalEvent<EmpOnTriggerComponent, TriggerEvent>(HandleEmpTrigger);
         SubscribeLocalEvent<EmpImmuneComponent, EmpAttemptEvent>(OnEmpAttempt);
+        SubscribeLocalEvent<EmpOnMeleeHitComponent, MeleeHitEvent>(OnMeleeHit); // 🌟Starlight🌟
 
         SubscribeLocalEvent<EmpDisabledComponent, RadioSendAttemptEvent>(OnRadioSendAttempt);
         SubscribeLocalEvent<EmpDisabledComponent, RadioReceiveAttemptEvent>(OnRadioReceiveAttempt);
@@ -56,6 +67,10 @@ public sealed class EmpSystem : SharedEmpSystem
         var attemptEv = new EmpAttemptEvent();
         RaiseLocalEvent(uid, attemptEv);
         if (attemptEv.Cancelled)
+            return;
+        
+        // 🌟Starlight🌟 Don't apply EMP effects to Clockwork faction members
+        if (_npcFaction.IsMember(uid, "Clockwork"))
             return;
 
         DoEmpEffects(uid, energyConsumption, duration);
@@ -103,6 +118,46 @@ public sealed class EmpSystem : SharedEmpSystem
         EmpPulse(_transform.GetMapCoordinates(uid), comp.Range, comp.EnergyConsumption, comp.DisableDuration);
         args.Handled = true;
     }
+    
+    // 🌟Starlight🌟
+    private void OnMeleeHit(EntityUid uid, EmpOnMeleeHitComponent component, MeleeHitEvent args)
+    {
+        // Check if the cooldown has passed
+        var currentTime = Timing.CurTime;
+        if (currentTime < component.NextEmpTime)
+            return;
+
+        // Set the next available time
+        component.NextEmpTime = currentTime + TimeSpan.FromSeconds(component.Cooldown);
+        
+        var user = args.User;
+        
+        Timer.Spawn(TimeSpan.FromSeconds(component.Cooldown), () =>
+        {
+            if (!Exists(uid) || !TryComp<EmpOnMeleeHitComponent>(uid, out _))
+                return;
+
+            if (Exists(user))
+            {
+                _popup.PopupEntity("EMP ability is ready!", uid, user, PopupType.Medium);
+            }
+            // else
+            // {   // little fallback
+            //     _popup.PopupEntity("EMP ability is ready!", uid, PopupType.Medium);
+            // }
+            var soundSpec = new SoundPathSpecifier("/Audio/_Starlight/Effects/emprecharge.ogg");
+            _audio.PlayPvs(soundSpec, uid, AudioParams.Default.WithVolume(-5f));
+        });
+
+        // Trigger EMP pulse at the first hit entity's location
+        if (args.HitEntities.Count > 0)
+        {
+            var hitEntity = args.HitEntities[0];
+            var hitEntityCoords = _transform.GetMapCoordinates(hitEntity);
+            EmpPulse(hitEntityCoords, component.Range, component.EnergyConsumption, component.DisableDuration);
+        }
+    }
+    // 🌟Starlight🌟
     
     private void OnExamine(EntityUid uid, EmpDisabledComponent component, ExaminedEvent args) => args.PushMarkup(Loc.GetString("emp-disabled-comp-on-examine"));
 
