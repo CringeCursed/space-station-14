@@ -116,3 +116,52 @@
     damage:
       types:
         Piercing: 20
+
+- type: entity
+  name: ratvar bow
+  parent: BaseItem
+  id: RatvarWeaponsBow
+# description: #TODO
+  components:
+  - type: Sprite
+    sprite: _Starlight/Objects/Weapons/Guns/Basic/clock_bow.rsi
+    layers:
+    - state: unwielded
+      map: [ base ]
+    - state: animation-icon
+      map: [ ammo-icon ]
+      visible: true
+  - type: Gun
+    minAngle: 0
+    maxAngle: 5
+    fireRate: 0.5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/_Starlight/Weapons/Guns/Gunshots/energybow.ogg
+  - type: Wieldable
+    wieldSound:
+      path: /Audio/Items/bow_pull.ogg
+  - type: GunRequiresWield
+  - type: RechargeBasicEntityAmmo
+    rechargeCooldown: 1
+    rechargeSound:
+      path: /Audio/_Starlight/Weapons/MagIn/energybowreload.ogg
+  - type: BasicEntityAmmoProvider
+    proto: ClockWorkEnergyArrow
+    capacity: 1
+    count: 1
+  - type: AmmoCounter
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.AmmoVisuals.HasAmmo:
+        ammo-icon:
+          True: { visible: True }
+          False: { visible: False }
+      enum.WieldableVisuals.Wielded:
+        base:
+          True: { state: wielded }
+          False: { state: unwielded }
+
