@@ -70,8 +70,8 @@ public sealed class EmpSystem : SharedEmpSystem
             return;
         
         // 🌟Starlight🌟 Don't apply EMP effects to Clockwork faction members
-        if (_npcFaction.IsMember(uid, "Clockwork"))
-            return;
+        // if (_npcFaction.IsMember(uid, "Clockwork"))
+        //     return;
 
         DoEmpEffects(uid, energyConsumption, duration);
     }

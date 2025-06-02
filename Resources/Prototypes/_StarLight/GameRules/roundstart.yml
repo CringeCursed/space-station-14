@@ -33,6 +33,7 @@
       - type: ClockworkMind
       - type: EnchantUser
       - type: MidaseUser
+      - type: EmpImmune
       - type: RandomMetadata
         nameSegments:
         - clockwork-role-master
@@ -59,6 +60,7 @@
       - type: ClockworkMind
       - type: EnchantUser
       - type: MidaseUser
+      - type: EmpImmune
       - type: RandomMetadata
         nameSegments:
         - clockworkPrefix
