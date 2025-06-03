@@ -83,6 +83,7 @@
     actions:
       - ActionBindWeapon
 
+#SWORD
 - type: entity
   parent: BaseSword
   id: WeaponRatvarSword
@@ -117,11 +118,12 @@
       types:
         Piercing: 20
 
+#Bow
 - type: entity
   name: ratvar bow
   parent: BaseItem
   id: RatvarWeaponsBow
-# description: #TODO
+  description:  
   components:
   - type: Sprite
     sprite: _Starlight/Objects/Weapons/Guns/Basic/clock_bow.rsi

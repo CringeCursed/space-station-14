@@ -177,4 +177,11 @@
         mask:
         - Impassable
         - BulletImpassable
+  - type: EmbeddableProjectile
+    sound: /Audio/Weapons/star_hit.ogg
+    embedOnThrow: false
+  - type: ThrowingAngle
+    angle: 0
   - type: Appearance
+  - type: TimedDespawn
+    lifetime: 0.5
