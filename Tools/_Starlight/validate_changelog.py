@@ -39,8 +39,13 @@ if ":cl:" not in changelog_content:
     sys.exit(1)
 
 # Check that after :cl: there is a non-empty author/identifier
-cl_line_match = re.search(r':cl:\s*(\S.*)', changelog_content)
-if not cl_line_match:
+cl_line = None
+for line in changelog_content.splitlines():
+    if line.strip().startswith(':cl:'):
+        cl_line = line
+        break
+
+if cl_line is None or not cl_line.strip()[4:].strip():
     print("::error::After ':cl:' you must specify your nickname or team, e.g. ':cl: Rinary'")
     sys.exit(1)
 
