@@ -1,0 +1,28 @@
+name: Validate Changelog
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  validate-changelog:
+    runs-on: ubuntu-latest
+    # Для edited — только если изменился body (описание)
+    if: github.event.action != 'edited' || github.event.changes.body
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install PyGithub
+
+      - name: Run changelog validator
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python Tools/_Starlight/validate_changelog.py 
