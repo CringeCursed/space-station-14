@@ -38,6 +38,12 @@ if ":cl:" not in changelog_content:
     print("::error::Changelog is missing the :cl: command")
     sys.exit(1)
 
+# Check that after :cl: there is a non-empty author/identifier
+cl_line_match = re.search(r':cl:\s*(\S.*)', changelog_content)
+if not cl_line_match:
+    print("::error::After ':cl:' you must specify your nickname or team, e.g. ':cl: Rinary'")
+    sys.exit(1)
+
 # Check for valid tags (accepts any symbol or no symbol before tag)
 valid_tags = ["add", "remove", "tweak", "fix"]
 entry_pattern = re.compile(r'^[ \t]*[^a-zA-Z0-9]?[ \t]*(add|remove|tweak|fix):', re.MULTILINE)
