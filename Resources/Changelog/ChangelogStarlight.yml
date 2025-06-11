@@ -7188,4 +7188,32 @@ Entries:
   id: 993
   time: '2025-06-10T22:58:27.000000+00:00'
   url: https://github.com/ss14Starlight/space-station-14/pull/801
+- author: STARLIGHT TEAM
+  changes:
+  - message: Added Starlight.
+    type: Add
+  id: 994
+  time: '2025-06-11T20:26:36.000000+00:00'
+  url: https://github.com/CringeCursed/space-station-14/pull/12
+- author: STARLIGHT TEAM
+  changes:
+  - message: Removed SS13.
+    type: Remove
+  id: 995
+  time: '2025-06-11T20:26:36.000000+00:00'
+  url: https://github.com/CringeCursed/space-station-14/pull/12
+- author: STARLIGHT TEAM
+  changes:
+  - message: Changed SS14.
+    type: Tweak
+  id: 996
+  time: '2025-06-11T20:26:36.000000+00:00'
+  url: https://github.com/CringeCursed/space-station-14/pull/12
+- author: STARLIGHT TEAM
+  changes:
+  - message: Fixed Rinary.
+    type: Fix
+  id: 997
+  time: '2025-06-11T20:26:36.000000+00:00'
+  url: https://github.com/CringeCursed/space-station-14/pull/12
 
