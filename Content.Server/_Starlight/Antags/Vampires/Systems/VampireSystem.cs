@@ -29,6 +29,9 @@ using Content.Shared.Popups;
 using Content.Shared.StatusEffectNew;
 using Content.Shared.Stunnable;
 using Content.Shared.Prayer;
+using Content.Shared.Mind.Components;
+using Content.Shared.Roles;
+using Content.Shared.Roles.Components;
 using Robust.Shared.Audio;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Prototypes;
@@ -72,6 +75,7 @@ public sealed partial class VampireSystem : EntitySystem
     [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
     [Dependency] private readonly GameTicker _gameTicker = default!;
+    [Dependency] private readonly SharedRoleSystem _role = default!;
     private ISawmill? _sawmill;
     private static readonly ProtoId<DamageGroupPrototype> _bruteGroupId = "Brute";
     private static readonly ProtoId<DamageGroupPrototype> _burnGroupId = "Burn";
@@ -92,11 +96,21 @@ public sealed partial class VampireSystem : EntitySystem
         SubscribeLocalEvent<VampireComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<VampireComponent, VampireProgressionChangedEvent>(OnProgressionChanged);
         SubscribeLocalEvent<ActionsComponent, ComponentStartup>(OnActionsComponentStartup);
+        SubscribeLocalEvent<MindContainerComponent, MindAddedMessage>(OnMindAdded);
         SubscribeLocalEvent<VampireComponent, ComponentRemove>(OnComponentRemove);
         SubscribeLocalEvent<PlayerAttachedEvent>(OnPlayerAttached);
         InitializeAbilities();
         InitializeObjectives();
     }
+
+    private void OnMindAdded(EntityUid uid, MindContainerComponent _, MindAddedMessage args)
+    {
+        if (!_role.MindHasRole<VampireRoleComponent>(args.Mind.Owner))
+            return;
+
+        EnsureComp<VampireComponent>(uid);
+    }
+
     private void OnPlayerAttached(PlayerAttachedEvent ev)
     {
         if (!TryComp(ev.Entity, out VampireComponent? vampire))
